@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!-- ↑ هذا السطر يخبر المتصفح: هذا ملف HTML5 -->
+
+<html lang="ar" dir="rtl">
+<!-- ↑ lang="ar": اللغة عربية -->
+<!-- ↑ dir="rtl": الكتابة من اليمين لليسار -->
+
+<head>
+    <!-- ↑ head: يحتوي على معلومات الصفحة (ليست ظاهرة للمستخدم) -->
+    
+    <meta charset="UTF-8">
+    <!-- ↑ charset: ترميز الأحرف، ضروري للعربية -->
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ↑ viewport: يجعل الصفحة مناسبة للجوال -->
+    
+    <title>تسجيل الدخول - مستشفى العيسي</title>
+    <!-- ↑ title: يظهر في تبويب المتصفح -->
+    
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- ↑ link: يربط ملف CSS الخارجي بالصفحة -->
+    <!-- ↑ rel="stylesheet": نوع الملف (تصميم) -->
+    <!-- ↑ href: مسار الملف -->
+</head>
+
+<body>
+    <!-- ↑ body: كل ما يظهر للمستخدم -->
+    
+    <div class="login-container">
+        <!-- ↑ div: حاوية (صندوق) -->
+        <!-- ↑ class: اسم ي​ستخدم في CSS للتصميم -->
+        
+        <div class="login-card">
+            <!-- ↑ card: بطاقة تسجيل الدخول -->
+            
+            <h1 class="login-title">🏥 مستشفى العيسي</h1>
+            <!-- ↑ h1: عنوان رئيسي -->
+            
+            <p class="login-subtitle">نظام إدارة المستشفى</p>
+            <!-- ↑ p: فقرة نصية -->
+            
+            <form id="loginForm">
+                <!-- ↑ form: نموذج (يجمع الحقول) -->
+                <!-- ↑ id: معر​ف فريد (ي​ستخدم في JavaScript) -->
+                
+                <div class="form-group">
+                    <!-- ↑ form-group: مجموعة حقل واحد (label + input) -->
+                    
+                    <label for="username">اسم المستخدم</label>
+                    <!-- ↑ label: عنوان الحقل -->
+                    <!-- ↑ for: يربط هذا العنوان بحقل الـ id المقابل -->
+                    
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="أدخل اسم المستخدم" 
+                        required
+                    >
+                    <!-- ↑ input: حقل إدخال -->
+                    <!-- ↑ type="text": نص عادي -->
+                    <!-- ↑ placeholder: نص رمادي يظهر قبل الكتابة -->
+                    <!-- ↑ required: حقل إلزامي (لا يمكن تركه فارغاً) -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="أدخل كلمة المرور" 
+                        required
+                    >
+                    <!-- ↑ type="password": يخفي النص المكتوب (يظهر كنقاط) -->
+                </div>
+                
+                <button type="submit" class="btn-login">تسجيل الدخول</button>
+                <!-- ↑ button: زر -->
+                <!-- ↑ type="submit": عند الضغط، ي​رسل النموذج -->
+                
+                <div id="message" class="message"></div>
+                <!-- ↑ div فارغة: لعرض رسائل النجاح أو الخطأ -->
+            </form>
+            
+        </div>
+    </div>
+    
+    <script src="/static/app.js"></script>
+    <!-- ↑ script: يربط ملف JavaScript -->
+    <!-- ↑ في نهاية body: حتى ي​حمَ​ل بعد HTML (مهم) -->
+</body>
+</html>

@@ -3,6 +3,10 @@
 # الوظيفة: مسارات API (Routes) لمشروع مستشفى العيسي
 # ═══════════════════════════════════════════════════════════
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
+
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -23,6 +27,12 @@ import models
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="مستشفى العيسي API", version="4.0")
+# ربط مجلد static بالموقع (لخدمة ملفات CSS و JS)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# إعداد Jinja2 (لخدمة صفحات HTML)
+templates = Jinja2Templates(directory="templates")
+
 
 
 # ═══════════════════════════════════════════════════════════
@@ -129,13 +139,17 @@ class AppointmentResponse(BaseModel):
 # ═══════════════════════════════════════════════════════════
 
 @app.get("/")
-def read_root():
-    return {"status": "ok", "message": "مستشفى العيسي API يعمل بنجاح"}
-
+def login_page(request: Request):
+    # ↑ request: طلب HTTP (ضروري لـ Jinja2)
+    return templates.TemplateResponse(request=request, name="login.html")
 
 @app.get("/about")
 def about():
     return {"name": "مستشفى العيسي", "version": "4.0"}
+
+@app.get("/dashboard")
+def dashboard_page(request: Request):
+   return templates.TemplateResponse(request=request , name="dashboard.html")
 
 
 # ═══════════════════════════════════════════════════════════
