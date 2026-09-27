@@ -91,3 +91,28 @@ class Appointment(Base):
     
     patient = relationship("Patient", back_populates="appointments")
     doctor = relationship("Doctor", back_populates="appointments")
+    
+    # ═══════════════════════════════════════════════════════════
+# جدول ٦: المستخدمون (Users)
+# المسؤولون عن تسجيل الدخول للنظام
+# الأدوار: admin (مدير), doctor (طبيب), receptionist (موظف استقبال)
+# ═══════════════════════════════════════════════════════════
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # اسم المستخدم (فريد، لا يتكرر)
+    username = Column(String, unique=True, nullable=False, index=True)
+    
+    # كلمة المرور المشفرة (لن ت​خزَ​ن أبداً كنص عادي)
+    hashed_password = Column(String, nullable=False)
+    
+    # الدور/الصلاحية
+    role = Column(String, default="receptionist")
+    
+    # هل الحساب نشط؟
+    is_active = Column(Boolean, default=True)
+    
+    # تاريخ التسجيل
+    created_at = Column(DateTime, default=datetime.now)

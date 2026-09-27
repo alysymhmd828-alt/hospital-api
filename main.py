@@ -9,6 +9,12 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 
+from fastapi.security import OAuth2PasswordRequestForm
+from datetime import timedelta
+import auth
+
+
+
 from database import engine, SessionLocal
 import models
 
@@ -54,6 +60,25 @@ class DoctorResponse(DoctorCreate):
     id: int
     class Config:
         from_attributes = True
+
+# ─── قوالب المستخدمين ───
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: Optional[str] = "receptionist"
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    role: str
+    is_active: bool
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
 
         # ─── قوالب الموظفين ───
 class EmployeeCreate(BaseModel):
@@ -119,7 +144,12 @@ def about():
 
 # إضافة قسم جديد
 @app.post("/departments/", response_model=DepartmentResponse)
-def create_department(dept: DepartmentCreate, db: Session = Depends(get_db)):
+def create_department(dept: DepartmentCreate,
+                       db: Session = Depends(get_db),
+                      current_user: models.User = Depends(auth.require_role("admin"))
+
+
+                      ):
     new_dept = models.Department(name=dept.name, description=dept.description)
     db.add(new_dept)         # جه​ز الإضافة
     db.commit()              # احفظ في القاعدة
@@ -139,7 +169,10 @@ def get_all_departments(db: Session = Depends(get_db)):
 
 # إضافة طبيب جديد
 @app.post("/doctors/", response_model=DoctorResponse)
-def create_doctor(doc: DoctorCreate, db: Session = Depends(get_db)):
+def create_doctor(doc: DoctorCreate,
+                   db: Session = Depends(get_db),
+                  current_user: models.User = Depends(auth.require_role("admin"))
+                  ):
     # التحقق: هل القسم موجود؟
     department = db.query(models.Department).filter(
         models.Department.id == doc.department_id
@@ -160,7 +193,10 @@ def create_doctor(doc: DoctorCreate, db: Session = Depends(get_db)):
 
 # عرض جميع الأطباء
 @app.get("/doctors/", response_model=List[DoctorResponse])
-def get_all_doctors(db: Session = Depends(get_db)):
+def get_all_doctors(db: Session = Depends(get_db),
+                    current_user: models.User = Depends(auth.get_current_user)
+                    
+                    ):
     return db.query(models.Doctor).all()
 
 
@@ -175,7 +211,11 @@ def get_doctors_by_department(dept_id: int, db: Session = Depends(get_db)):
 # ═══════════════════════════════════════════════════════════
 
 @app.post("/patients/", response_model=PatientResponse)
-def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
+def create_patient(patient: PatientCreate, db: Session = Depends(get_db),
+                   
+                   current_user: models.User = Depends(auth.require_role("admin"))
+                   
+                   ):
     new_patient = models.Patient(
         name=patient.name,
         age=patient.age,
@@ -188,7 +228,10 @@ def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/patients/", response_model=List[PatientResponse])
-def get_all_patients(db: Session = Depends(get_db)):
+def get_all_patients(db: Session = Depends(get_db),
+                     current_user: models.User = Depends(auth.get_current_user)
+                     
+                     ):
     return db.query(models.Patient).all()
 
 
@@ -201,7 +244,11 @@ def get_patient(patient_id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/patients/{patient_id}")
-def delete_patient(patient_id: int, db: Session = Depends(get_db)):
+def delete_patient(patient_id: int,
+                    db: Session = Depends(get_db),
+                    current_user: models.User = Depends(auth.require_role("admin"))
+                   
+                   ):
     patient = db.query(models.Patient).filter(models.Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="المريض غير موجود")
@@ -261,7 +308,12 @@ def get_patient_appointments(patient_id: int, db: Session = Depends(get_db)):
 
 # إضافة موظف جديد
 @app.post("/employees/", response_model=EmployeeResponse)
-def create_employee(emp: EmployeeCreate, db: Session = Depends(get_db)):
+def create_employee(emp: EmployeeCreate, 
+                    db: Session = Depends(get_db),
+                    current_user: models.User = Depends(auth.require_role("admin"))
+
+                    
+                    ):
     new_emp = models.Employee(
         name=emp.name,
         role=emp.role,
@@ -289,10 +341,66 @@ def get_employees_by_role(role: str, db: Session = Depends(get_db)):
 
 # حذف موظف (تعيين غير نشط بدلاً من الحذف)
 @app.delete("/employees/{emp_id}")
-def deactivate_employee(emp_id: int, db: Session = Depends(get_db)):
+def deactivate_employee(emp_id: int,
+                         db: Session = Depends(get_db),
+                        current_user: models.User = Depends(auth.require_role("admin"))
+                        ):
     emp = db.query(models.Employee).filter(models.Employee.id == emp_id).first()
     if not emp:
         raise HTTPException(status_code=404, detail="الموظف غير موجود")
     emp.is_active = False
     db.commit()
     return {"msg": "تم تعطيل الموظف (لم ي​حذف من القاعدة)"}
+# ═══════════════════════════════════════════════════════════
+# مسارات المصادقة (Authentication)
+# ═══════════════════════════════════════════════════════════
+
+# ─── تسجيل مستخدم جديد ───
+@app.post("/signup", response_model=UserResponse)
+def signup(user: UserCreate, db: Session = Depends(auth.get_db)):
+    # التحقق: هل اسم المستخدم موجود مسبقاً؟
+    existing = db.query(models.User).filter(
+        models.User.username == user.username
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="اسم المستخدم محجوز")
+    
+    # إنشاء المستخدم مع تشفير كلمة المرور
+    new_user = models.User(
+        username=user.username,
+        hashed_password=auth.hash_password(user.password),
+        role=user.role
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+
+# ─── تسجيل الدخول ───
+@app.post("/login", response_model=Token)
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(auth.get_db)
+):
+    # البحث عن المستخدم
+    user = db.query(models.User).filter(
+        models.User.username == form_data.username
+    ).first()
+    
+    # التحقق من كلمة المرور
+    if not user or not auth.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="اسم المستخدم أو كلمة المرور خاطئة")
+    
+    # إنشاء التوكن
+    access_token = auth.create_access_token(
+        data={"sub": user.username, "role": user.role},
+        expires_delta=timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+# ─── الحصول على بيانات المستخدم الحالي ───
+@app.get("/me", response_model=UserResponse)
+def read_me(current_user: models.User = Depends(auth.get_current_user)):
+    return current_user
