@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المواعيد - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <!-- ═══ الشريط العلوي ═══ -->
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">المواعيد</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <!-- ═══ المحتوى ═══ -->
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>📅 قائمة المواعيد</h2>
+            <div>
+                <a href="/add_appointment_page" class="btn-primary">➕ حجز موعد</a>
+                <a href="/dashboard" class="btn-back">← العودة</a>
+            </div>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>المريض</th>
+                        <th>الطبيب</th>
+                        <th>التاريخ</th>
+                        <th>الحالة</th>
+                        <th>ملاحظات</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsBody">
+                    <tr>
+                        <td colspan="7" class="loading">⏳ جارٍ التحميل...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

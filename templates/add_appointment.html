@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز موعد - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">حجز موعد</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>➕ حجز موعد جديد</h2>
+            <a href="/appointments_page" class="btn-back">← العودة</a>
+        </div>
+        
+        <div class="form-container">
+            <form id="addAppointmentForm">
+                
+                <!-- اختيار المريض -->
+                <div class="form-group">
+                    <label for="patient_id">المريض *</label>
+                    <select id="patient_id" required>
+                        <option value="">-- اختر المريض --</option>
+                    </select>
+                </div>
+                
+                <!-- اختيار الطبيب -->
+                <div class="form-group">
+                    <label for="doctor_id">الطبيب *</label>
+                    <select id="doctor_id" required>
+                        <option value="">-- اختر الطبيب --</option>
+                    </select>
+                </div>
+                
+                <!-- ملاحظات -->
+                <div class="form-group">
+                    <label for="notes">ملاحظات</label>
+                    <input 
+                        type="text" 
+                        id="notes" 
+                        placeholder="مثال: فحص دوري (اختياري)"
+                    >
+                </div>
+                
+                <button type="submit" class="btn-login" id="submitBtn">حجز الموعد</button>
+                
+                <div id="message" class="message"></div>
+                
+            </form>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

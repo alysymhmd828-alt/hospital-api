@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة مريض - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">إضافة مريض</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>➕ إضافة مريض جديد</h2>
+            <a href="/patients_page" class="btn-back">← العودة</a>
+        </div>
+        
+        <div class="form-container">
+            <form id="addPatientForm">
+                
+                <div class="form-group">
+                    <label for="name">اسم المريض *</label>
+                    <input type="text" id="name" name="name" placeholder="مثال: أحمد محمد" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">العمر *</label>
+                    <input type="number" id="age" name="age" placeholder="مثال: 30" min="0" max="150" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="diagnosis">التشخيص *</label>
+                    <input type="text" id="diagnosis" name="diagnosis" placeholder="مثال: ارتفاع ضغط" required>
+                </div>
+                
+                <button type="submit" class="btn-login" id="submitBtn">حفظ المريض</button>
+                
+                <div id="message" class="message"></div>
+            </form>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

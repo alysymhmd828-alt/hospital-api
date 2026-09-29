@@ -2,7 +2,9 @@
 # ملف: auth.py
 # الوظيفة: إدارة المصادقة (تسجيل الدخول، التوكن، التحقق)
 # ═══════════════════════════════════════════════════════════
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -19,7 +21,8 @@ import models
 # ═══════════════════════════════════════════════════════════
 
 # المفتاح السري لتوقيع التوكن (في الإنتاج، ضعه في .env)
-SECRET_KEY = "my-super-secret-key-change-this-later"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 
 # خوارزمية التشفير
 ALGORITHM = "HS256"

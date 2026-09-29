@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة طبيب - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <!-- ═══ الشريط العلوي ═══ -->
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">إضافة طبيب</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <!-- ═══ المحتوى ═══ -->
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>➕ إضافة طبيب جديد</h2>
+            <a href="/doctors_page" class="btn-back">← العودة</a>
+        </div>
+        
+        <div class="form-container">
+            <form id="addDoctorForm">
+                
+                <!-- حقل اسم الطبيب -->
+                <div class="form-group">
+                    <label for="name">اسم الطبيب *</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        placeholder="مثال: د. أحمد علي" 
+                        required
+                    >
+                </div>
+                
+                <!-- حقل التخصص -->
+                <div class="form-group">
+                    <label for="specialty">التخصص *</label>
+                    <input 
+                        type="text" 
+                        id="specialty" 
+                        placeholder="مثال: قلب، عظام، أطفال" 
+                        required
+                    >
+                </div>
+                
+                <!-- حقل القسم (قائمة منسدلة) -->
+                <div class="form-group">
+                    <label for="department_id">القسم *</label>
+                    <select id="department_id" required>
+                        <option value="">-- اختر القسم --</option>
+                        <!-- ↑ سي​ملأ بواسطة JavaScript من قاعدة البيانات -->
+                    </select>
+                </div>
+                
+                <!-- زر الحفظ -->
+                <button type="submit" class="btn-login" id="submitBtn">حفظ الطبيب</button>
+                
+                <!-- منطقة الرسائل -->
+                <div id="message" class="message"></div>
+                
+            </form>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

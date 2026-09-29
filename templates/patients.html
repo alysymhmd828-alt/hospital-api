@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المرضى - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <!-- ═══ الشريط العلوي ═══ -->
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">المرضى</span>
+        </div>
+        
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <!-- ═══ المحتوى ═══ -->
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>📋 قائمة المرضى</h2>
+            <a href="/dashboard" class="btn-back">← العودة</a>
+        </div>
+        
+        <!-- رسالة (نجاح/خطأ) -->
+        <div id="message" class="message"></div>
+        
+        <!-- جدول المرضى -->
+        <div class="table-container">
+            <table class="data-table" id="patientsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>العمر</th>
+                        <th>التشخيص</th>
+                        <th>التاريخ</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="patientsBody">
+                    <!-- ↑ سي​ملأ بواسطة JavaScript -->
+                    <tr>
+                        <td colspan="6" class="loading">⏳ جارٍ التحميل...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

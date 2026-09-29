@@ -358,3 +358,174 @@ body {
     color: white;
     transform: translateY(-2px);
 }
+/* ═══════════════════════════════════════════════════════ */
+/* صفحة قائمة المرضى */
+/* ═══════════════════════════════════════════════════════ */
+
+/* ─── رأس الصفحة (العنوان + زر العودة) ─── */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h2 {
+    color: #2d3748;
+    font-size: 24px;
+}
+
+.btn-back {
+    background: #718096;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-back:hover {
+    background: #4a5568;
+}
+
+/* ─── حاوية الجدول ─── */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+    /* ↑ يسمح بالتمرير الأفقي إذا كان الجدول عريضاً */
+}
+
+/* ─── الجدول ─── */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    /* ↑ يدمج الحدود بين الخلايا */
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.data-table th {
+    padding: 14px 12px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.data-table tbody tr:hover {
+    background: #f7fafc;
+    /* ↑ تأثير عند المرور بالمؤشر */
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ─── خلية التحميل ─── */
+.loading {
+    text-align: center;
+    padding: 40px !important;
+    color: #718096;
+}
+
+/* ─── زر الحذف داخل الجدول ─── */
+.btn-delete {
+    background: #fc8181;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-delete:hover {
+    background: #f56565;
+}
+
+/* ─── رسالة فارغة (لا يوجد مرضى) ─── */
+.empty-message {
+    text-align: center;
+    padding: 40px !important;
+    color: #718096;
+    font-style: italic;
+}
+/* ═══════════════════════════════════════════════════════ */
+/* صفحة إضافة مريض */
+/* ═══════════════════════════════════════════════════════ */
+
+.form-container {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-container .form-group {
+    margin-bottom: 20px;
+}
+
+.form-container .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-container .form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+
+.form-container .form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-container .btn-login {
+    margin-top: 10px;
+}
+/* ─── زر أساسي (أزرق بنفسجي) ─── */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+    margin-left: 8px;
+    /* ↑ margin-left: مسافة صغيرة بينه وبين زر العودة */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    /* ↑ يرتفع 2 بكسل عند المرور */
+    
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+    /* ↑ ظل بنفسجي عند المرور */
+}

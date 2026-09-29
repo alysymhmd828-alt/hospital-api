@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأطباء - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <!-- ═══ الشريط العلوي (نفس باقي الصفحات) ═══ -->
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">الأطباء</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <!-- ═══ المحتوى الرئيسي ═══ -->
+    <main class="dashboard-main">
+        
+        <!-- رأس الصفحة: العنوان + الأزرار -->
+        <div class="page-header">
+            <h2>👨‍⚕️ قائمة الأطباء</h2>
+            <div>
+                <a href="/add_doctor_page" class="btn-primary">➕ إضافة طبيب</a>
+                <a href="/dashboard" class="btn-back">← العودة</a>
+            </div>
+        </div>
+        
+        <!-- رسالة (نجاح / خطأ) - مخفية في البداية -->
+        <div id="message" class="message"></div>
+        
+        <!-- جدول الأطباء -->
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>التخصص</th>
+                        <th>القسم</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <!-- ↑ thead: رأس الجدول (لا يتغير) -->
+                
+                <tbody id="doctorsBody">
+                    <!-- ↑ tbody: جسم الجدول (يتغير) -->
+                    <!-- ↑ id: نستخدمه في JavaScript لملء الصفوف -->
+                    
+                    <tr>
+                        <td colspan="5" class="loading">⏳ جارٍ التحميل...</td>
+                    </tr>
+                    <!-- ↑ colspan="5": خلية واحدة تمتد على 5 أعمدة -->
+                </tbody>
+            </table>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

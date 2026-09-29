@@ -151,6 +151,9 @@ def about():
 def dashboard_page(request: Request):
    return templates.TemplateResponse(request=request , name="dashboard.html")
 
+@app.get("/patients_page")
+def patients_page(request: Request):
+    return templates.TemplateResponse(request=request, name="patients.html")
 
 # ═══════════════════════════════════════════════════════════
 # مسارات الأقسام (Departments)
@@ -219,6 +222,20 @@ def get_all_doctors(db: Session = Depends(get_db),
 def get_doctors_by_department(dept_id: int, db: Session = Depends(get_db)):
     return db.query(models.Doctor).filter(models.Doctor.department_id == dept_id).all()
 
+# حذف طبيب (admin فقط)
+@app.delete("/doctors/{doctor_id}")
+def delete_doctor(
+    doctor_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.require_role("admin"))
+):
+    doctor = db.query(models.Doctor).filter(models.Doctor.id == doctor_id).first()
+    if not doctor:
+        raise HTTPException(status_code=404, detail="الطبيب غير موجود")
+    db.delete(doctor)
+    db.commit()
+    return {"msg": "تم حذف الطبيب بنجاح"}
+
 
 # ═══════════════════════════════════════════════════════════
 # مسارات المرضى (Patients)
@@ -270,6 +287,28 @@ def delete_patient(patient_id: int,
     db.commit()
     return {"msg": "تم حذف المريض بنجاح"}
 
+@app.get("/add_patient_page")
+def add_patient_page(request: Request):
+    return templates.TemplateResponse(request=request, name="add_patient.html")
+# ─── صفحة عرض الأطباء ───
+@app.get("/doctors_page")
+def doctors_page(request: Request):
+    return templates.TemplateResponse(request=request, name="doctors.html")
+
+# ─── صفحة إضافة طبيب ───
+@app.get("/add_doctor_page")
+def add_doctor_page(request: Request):
+    return templates.TemplateResponse(request=request, name="add_doctor.html")
+
+# ─── صفحة عرض المواعيد ───
+@app.get("/appointments_page")
+def appointments_page(request: Request):
+    return templates.TemplateResponse(request=request, name="appointments.html")
+
+# ─── صفحة حجز موعد ───
+@app.get("/add_appointment_page")
+def add_appointment_page(request: Request):
+    return templates.TemplateResponse(request=request, name="add_appointment.html")
 
 # ═══════════════════════════════════════════════════════════
 # مسارات المواعيد (Appointments)
@@ -304,11 +343,30 @@ def create_appointment(apt: AppointmentCreate, db: Session = Depends(get_db)):
     return new_apt
 
 
-# عرض جميع المواعيد
+# عرض كل المواعيد (أي مستخدم مسجل)
 @app.get("/appointments/", response_model=List[AppointmentResponse])
-def get_all_appointments(db: Session = Depends(get_db)):
+def get_all_appointments(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
     return db.query(models.Appointment).all()
 
+
+# حذف موعد (admin فقط)
+@app.delete("/appointments/{appointment_id}")
+def delete_appointment(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.require_role("admin"))
+):
+    appointment = db.query(models.Appointment).filter(
+        models.Appointment.id == appointment_id
+    ).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="الموعد غير موجود")
+    db.delete(appointment)
+    db.commit()
+    return {"msg": "تم حذف الموعد بنجاح"}
 
 # عرض مواعيد مريض معين
 @app.get("/patients/{patient_id}/appointments/", response_model=List[AppointmentResponse])
