@@ -310,6 +310,56 @@ def appointments_page(request: Request):
 def add_appointment_page(request: Request):
     return templates.TemplateResponse(request=request, name="add_appointment.html")
 
+# ─── صفحة عرض الأقسام ───
+@app.get("/departments_page")
+def departments_page(request: Request):
+    return templates.TemplateResponse(request=request, name="departments.html")
+
+# ─── صفحة إضافة قسم ───
+@app.get("/add_department_page")
+def add_department_page(request: Request):
+    return templates.TemplateResponse(request=request, name="add_department.html")
+
+
+# ─── حذف قسم (admin فقط) ───
+@app.delete("/departments/{dept_id}")
+def delete_department(
+    dept_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.require_role("admin"))
+):
+    # التحقق: هل يوجد أطباء أو موظفون في هذا القسم؟
+    doctors_count = db.query(models.Doctor).filter(
+        models.Doctor.department_id == dept_id
+    ).count()
+    employees_count = db.query(models.Employee).filter(
+        models.Employee.department_id == dept_id
+    ).count()
+    
+    if doctors_count > 0 or employees_count > 0:
+        raise HTTPException(
+            status_code=400,
+            detail=f"لا يمكن حذف القسم: يحتوي على {doctors_count} طبيب و {employees_count} موظف"
+        )
+    
+    dept = db.query(models.Department).filter(models.Department.id == dept_id).first()
+    if not dept:
+        raise HTTPException(status_code=404, detail="القسم غير موجود")
+    
+    db.delete(dept)
+    db.commit()
+    return {"msg": "تم حذف القسم بنجاح"}
+# ─── صفحة عرض الموظفين ───
+@app.get("/employees_page")
+def employees_page(request: Request):
+    return templates.TemplateResponse(request=request, name="employees.html")
+
+# ─── صفحة إضافة موظف ───
+@app.get("/add_employee_page")
+def add_employee_page(request: Request):
+    return templates.TemplateResponse(request=request, name="add_employee.html")
+
+
 # ═══════════════════════════════════════════════════════════
 # مسارات المواعيد (Appointments)
 # ═══════════════════════════════════════════════════════════
@@ -405,24 +455,27 @@ def get_all_employees(db: Session = Depends(get_db)):
     return db.query(models.Employee).all()
 
 
-# عرض موظفي دور معين (مثل: كل الممرضين)
 @app.get("/employees/by-role/{role}", response_model=List[EmployeeResponse])
-def get_employees_by_role(role: str, db: Session = Depends(get_db)):
+def get_employees_by_role(
+    role: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
     return db.query(models.Employee).filter(models.Employee.role == role).all()
 
-
-# حذف موظف (تعيين غير نشط بدلاً من الحذف)
+# حذف موظف (admin فقط)
 @app.delete("/employees/{emp_id}")
-def deactivate_employee(emp_id: int,
-                         db: Session = Depends(get_db),
-                        current_user: models.User = Depends(auth.require_role("admin"))
-                        ):
+def delete_employee(
+    emp_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.require_role("admin"))
+):
     emp = db.query(models.Employee).filter(models.Employee.id == emp_id).first()
     if not emp:
         raise HTTPException(status_code=404, detail="الموظف غير موجود")
-    emp.is_active = False
+    db.delete(emp)
     db.commit()
-    return {"msg": "تم تعطيل الموظف (لم ي​حذف من القاعدة)"}
+    return {"msg": "تم حذف الموظف بنجاح"}
 # ═══════════════════════════════════════════════════════════
 # مسارات المصادقة (Authentication)
 # ═══════════════════════════════════════════════════════════

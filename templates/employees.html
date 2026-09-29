@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموظفون - مستشفى العيسي</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+    
+    <header class="topbar">
+        <div class="topbar-right">
+            <h1>🏥 مستشفى العيسي</h1>
+            <span class="badge">الموظفون</span>
+        </div>
+        <div class="topbar-left">
+            <span id="userInfo">مرحباً...</span>
+            <button id="logoutBtn" class="btn-logout">تسجيل الخروج</button>
+        </div>
+    </header>
+    
+    <main class="dashboard-main">
+        
+        <div class="page-header">
+            <h2>👥 قائمة الموظفين</h2>
+            <div>
+                <a href="/add_employee_page" class="btn-primary">➕ إضافة موظف</a>
+                <a href="/dashboard" class="btn-back">← العودة</a>
+            </div>
+        </div>
+        
+        <!-- فلتر حسب الدور -->
+        <div class="filter-bar">
+            <label for="roleFilter">فلترة حسب الدور:</label>
+            <select id="roleFilter">
+                <option value="">الكل</option>
+                <option value="ممرض">ممرض</option>
+                <option value="صيدلي">صيدلي</option>
+                <option value="حارس">حارس</option>
+                <option value="إداري">إداري</option>
+                <option value="فني مختبر">فني مختبر</option>
+            </select>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>الوظيفة</th>
+                        <th>الهاتف</th>
+                        <th>الراتب</th>
+                        <th>الحالة</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesBody">
+                    <tr><td colspan="7" class="loading">⏳ جارٍ التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </main>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -680,6 +680,309 @@ if (addAppointmentForm) {
             }
         });
     }
+    // ═══════════════════════════════════════════════════════
+// كود صفحة الأقسام (departments.html)
+// ═══════════════════════════════════════════════════════
+
+const departmentsBody = document.getElementById('departmentsBody');
+
+if (departmentsBody) {
+    loadDepartments();
+    
+    function loadDepartments() {
+        const token = localStorage.getItem('access_token');
+        if (!token) { window.location.href = '/'; return; }
+        
+        fetch('/departments/', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(r => r.json())
+        .then(departments => renderDepartments(departments))
+        .catch(() => {
+            departmentsBody.innerHTML = '<tr><td colspan="4" class="empty-message">❌ فشل التحميل</td></tr>';
+        });
+    }
+    
+    function renderDepartments(departments) {
+        if (departments.length === 0) {
+            departmentsBody.innerHTML = '<tr><td colspan="4" class="empty-message">لا يوجد أقسام</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        departments.forEach(function(dept) {
+            html += `
+                <tr>
+                    <td>${dept.id}</td>
+                    <td>${dept.name}</td>
+                    <td>${dept.description || '-'}</td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteDepartment(${dept.id})">حذف</button>
+                    </td>
+                </tr>
+            `;
+        });
+        departmentsBody.innerHTML = html;
+    }
+    
+    window.deleteDepartment = function(deptId) {
+        if (!confirm('هل أنت متأكد من حذف هذا القسم؟')) return;
+        
+        const token = localStorage.getItem('access_token');
+        fetch('/departments/' + deptId, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(async response => {
+            if (response.ok) {
+                loadDepartments();
+                showPageMsg('✅ تم الحذف بنجاح', 'success');
+            } else if (response.status === 403) {
+                showPageMsg('❌ ليس لديك صلاحية (admin فقط)', 'error');
+            } else {
+                const error = await response.json();
+                showPageMsg('❌ ' + (error.detail || 'فشل الحذف'), 'error');
+            }
+        })
+        .catch(() => showPageMsg('❌ خطأ في الاتصال', 'error'));
+    };
+}
+
+// ═══════════════════════════════════════════════════════
+// كود صفحة إضافة قسم (add_department.html)
+// ═══════════════════════════════════════════════════════
+
+const addDepartmentForm = document.getElementById('addDepartmentForm');
+
+if (addDepartmentForm) {
+    addDepartmentForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('name').value.trim();
+        const description = document.getElementById('description').value.trim();
+        
+        const messageDiv = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (!name) {
+            messageDiv.className = 'message error';
+            messageDiv.textContent = '❌ يرجى إدخال اسم القسم';
+            return;
+        }
+        
+        const token = localStorage.getItem('access_token');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جارٍ الحفظ...';
+        
+        try {
+            const response = await fetch('/departments/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description || null
+                })
+            });
+            
+            if (response.ok) {
+                messageDiv.className = 'message success';
+                messageDiv.textContent = '✅ تم الحفظ! جارٍ التحويل...';
+                setTimeout(() => window.location.href = '/departments_page', 1000);
+            } else {
+                const error = await response.json();
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ ' + (error.detail || 'فشل الحفظ');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'حفظ القسم';
+            }
+        } catch (error) {
+            messageDiv.className = 'message error';
+            messageDiv.textContent = '❌ خطأ في الاتصال';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'حفظ القسم';
+        }
+    });
+}
+// ═══════════════════════════════════════════════════════
+// كود صفحة الموظفين (employees.html)
+// ═══════════════════════════════════════════════════════
+
+const employeesBody = document.getElementById('employeesBody');
+
+if (employeesBody) {
+    let allEmployees = [];
+    // ↑ نخز​ن كل الموظفين في متغير عالمي للفلترة
+    
+    loadEmployees();
+    
+    function loadEmployees() {
+        const token = localStorage.getItem('access_token');
+        if (!token) { window.location.href = '/'; return; }
+        
+        fetch('/employees/', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(r => r.json())
+        .then(employees => {
+            allEmployees = employees;
+            renderEmployees(employees);
+        })
+        .catch(() => {
+            employeesBody.innerHTML = '<tr><td colspan="7" class="empty-message">❌ فشل التحميل</td></tr>';
+        });
+    }
+    
+    function renderEmployees(employees) {
+        if (employees.length === 0) {
+            employeesBody.innerHTML = '<tr><td colspan="7" class="empty-message">لا يوجد موظفون</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        employees.forEach(function(emp) {
+            const statusClass = emp.is_active ? 'status-active' : 'status-inactive';
+            const statusText = emp.is_active ? 'نشط' : 'غير نشط';
+            const salary = emp.salary ? emp.salary.toLocaleString() : '-';
+            
+            html += `
+                <tr>
+                    <td>${emp.id}</td>
+                    <td>${emp.name}</td>
+                    <td>${emp.role}</td>
+                    <td>${emp.phone || '-'}</td>
+                    <td>${salary}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteEmployee(${emp.id})">حذف</button>
+                    </td>
+                </tr>
+            `;
+        });
+        employeesBody.innerHTML = html;
+    }
+    
+    // ─── فلترة حسب الدور ───
+    const roleFilter = document.getElementById('roleFilter');
+    if (roleFilter) {
+        roleFilter.addEventListener('change', function() {
+            const selectedRole = this.value;
+            if (!selectedRole) {
+                renderEmployees(allEmployees);
+            } else {
+                const filtered = allEmployees.filter(e => e.role === selectedRole);
+                renderEmployees(filtered);
+            }
+        });
+    }
+    
+    window.deleteEmployee = function(empId) {
+        if (!confirm('هل أنت متأكد من حذف هذا الموظف؟')) return;
+        
+        const token = localStorage.getItem('access_token');
+        fetch('/employees/' + empId, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(response => {
+            if (response.ok) {
+                loadEmployees();
+                showPageMsg('✅ تم الحذف بنجاح', 'success');
+            } else if (response.status === 403) {
+                showPageMsg('❌ ليس لديك صلاحية (admin فقط)', 'error');
+            } else {
+                showPageMsg('❌ فشل الحذف', 'error');
+            }
+        })
+        .catch(() => showPageMsg('❌ خطأ في الاتصال', 'error'));
+    };
+}
+
+// ═══════════════════════════════════════════════════════
+// كود صفحة إضافة موظف (add_employee.html)
+// ═══════════════════════════════════════════════════════
+
+const addEmployeeForm = document.getElementById('addEmployeeForm');
+
+if (addEmployeeForm) {
+    const token = localStorage.getItem('access_token');
+    const deptSelect = document.getElementById('department_id');
+    
+    // ─── جلب الأقسام ───
+    fetch('/departments/', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(r => r.json())
+    .then(departments => {
+        departments.forEach(dept => {
+            const option = document.createElement('option');
+            option.value = dept.id;
+            option.textContent = dept.name;
+            deptSelect.appendChild(option);
+        });
+    });
+    
+    // ─── عند حفظ الموظف ───
+    addEmployeeForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('name').value.trim();
+        const role = document.getElementById('role').value;
+        const phone = document.getElementById('phone').value.trim();
+        const salary = document.getElementById('salary').value;
+        const department_id = document.getElementById('department_id').value;
+        
+        const messageDiv = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (!name || !role) {
+            messageDiv.className = 'message error';
+            messageDiv.textContent = '❌ الاسم والوظيفة إلزاميان';
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جارٍ الحفظ...';
+        
+        // ─── تجهيز البيانات (تحويل الأرقام) ───
+        const payload = {
+            name: name,
+            role: role,
+            phone: phone || null,
+            salary: salary ? parseFloat(salary) : null,
+            department_id: department_id ? parseInt(department_id) : null
+        };
+        
+        try {
+            const response = await fetch('/employees/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (response.ok) {
+                messageDiv.className = 'message success';
+                messageDiv.textContent = '✅ تم الحفظ! جارٍ التحويل...';
+                setTimeout(() => window.location.href = '/employees_page', 1000);
+            } else if (response.status === 403) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ ليس لديك صلاحية (admin فقط)';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'حفظ الموظف';
+            } else {
+                const error = await response.json();
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ ' + (error.detail || 'فشل الحفظ');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'حفظ الموظف';
+            }
+        } catch (error) {
+            messageDiv.className = 'message error';
+            messageDiv.textContent = '❌ خطأ في الاتصال';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'حفظ الموظف';
+        }
+    });
+}
 
 
 });
