@@ -153,3 +153,31 @@ pip install -r requirements.txt
 
 # 6. شغ​ل السيرفر
 uvicorn main:app --reload
+---
+
+## 👨‍💻 عن المطو​ر
+
+**Mohammed Ismail Saleh Al-Esi** (محمد إسماعيل صالح العيسي)
+
+طالب في السنة الرابعة، تخصص **تقنية المعلومات (Information Technology)**، شغوف بمجال **تطوير الباك إند، إدارة الأنظمة والشبكات، والحوسبة السحابية**.
+
+بدأ رحلته في البرمجة بتعلم أساسيات اللغات (C++, Python, JavaScript)، ثم توج​ه إلى بناء أنظمة متكاملة باستخدام **FastAPI و PostgreSQL**، مع التركيز على:
+
+- تصميم قواعد البيانات العلائقية.
+- بناء واجهات برمجة التطبيقات (REST APIs).
+- تطبيق معايير الأمان (JWT, bcrypt, Role-Based Access Control).
+- تطوير واجهات ويب عربية متجاوبة.
+
+**هذا المشروع** يمثل حصيلة جهد شخصي في تطبيق المفاهيم النظرية على أرض الواقع، بهدف بناء نظام حقيقي قابل للتطبيق في المستشفيات والمراكز الطبية.
+
+### 🎯 الاهتمامات:
+- Backend Development (Python / FastAPI)
+- Database Design (PostgreSQL / SQLAlchemy)
+- System Administration & Networking
+- Cloud Computing & DevOps
+- Cybersecurity Fundamentals
+
+### 📬 التواصل:
+- GitHub: [@alysymhmd828-alt](https://github.com/alysymhmd828-alt)
+
+---
